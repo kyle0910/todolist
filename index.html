@@ -1,0 +1,177 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>SessionStorage Todolist</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="short icon" href="images/todoico.ico">
+	<meta name="description" content="Simple Todo List">
+	<meta name="keyword" content="Todo list, SessionStrage">
+	<meta property="og:title" content="Simple Todo List">
+	<meta property="og:description" content="Simple Todo List">
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="">
+	<meta property="og:image" content="">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<style>
+		body{
+			/* background: url(https://bit.ly/2SehITN); */
+			background-size: cover;
+			height: 100vh;
+			font-family: Microsoft JhengHei;
+		}
+		.wrap{
+			max-width:  500px;
+			min-height: 500px;
+			background: lightblue;
+			margin: 0 auto;
+			padding-bottom: 10px;
+		}
+		.panel{
+			display: flex;
+
+		}
+		.img{
+			flex: 1 1 40%;
+			max-width: 40%;
+			text-align: center;
+		}
+		h1{
+			width: 90%;
+			font-weight: bold;
+			font-size: 35px;
+			color: #fff;
+		}
+		.panel{
+			display: flex;
+			justify-content: space-evenly;
+			align-items: center;
+		}
+		.time,.delete{
+			margin-right: 15px;
+			text-decoration: none;
+		}
+		input{
+			border: 2px solid rgb(73, 41, 10);
+		    height: 50px;
+		    padding-left: 20px;
+		    width: 68%;
+		    box-sizing: border-box;
+			border-radius: 8px !important;
+		}
+		button{
+			cursor: pointer;
+		    background: #e8a874;
+		    height: 50px;
+		    width: 30%;
+		    box-sizing: border-box;
+			border-radius: 8px !important;
+		}
+		.board ul{
+			padding: 0;
+			margin: 0 auto;
+			width: 90%;
+		}
+		.board li{
+			margin: 5px auto;
+			background: white;
+			width: 90%;
+			padding: 5px;
+			list-style: none;
+		}
+		.newline{
+			display: block;
+			word-wrap: break-word;
+		}
+		@media screen and (max-width: 576px) {
+			.panel{
+				flex-direction: column;
+			}
+			.img{
+				margin-bottom: 10px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="wrap">
+		<div class="panel">
+			<div class="img">
+				<h1>TodoList</h1>
+			</div>
+			<div class="box">
+				<form name='memo'>
+					<input type="text" class="input" placeholder="Type something" required>
+					<button  class="send">submit</button>
+				</form>
+			</div>
+		</div>
+		<div class="board">
+			<ul >
+			</ul>
+		</div>
+	</div>
+
+	<script>
+		
+		let submit = document.querySelector('.send'),
+			board = document.querySelector('.board');
+
+		function init(e){
+			// 清理畫面
+			let rows = document.querySelector('.board ul'),
+				todos = JSON.parse(localStorage.getItem('todolist')) || [],
+				row = '';
+			for (let i = 0; i < todos.length; i++) {
+				let todo = todos[i];
+				row += `<li>
+							<a href='#' class='delete' data-num=${i}>Delete</a>
+							<span class='time'>${todo.time}</span><span class='newline'>${todo.message}<span>
+						</li>`;
+			}
+			// 將資料更新至頁面
+			rows.innerHTML = row;
+		}
+
+		function insert(e){
+			e.preventDefault();
+			if(!document.getElementsByTagName('form')[0].checkValidity()){
+				alert('You appear to have sent an empty memorandum!')
+				return;
+			}
+			let	date = new Date(),
+				time = date.getFullYear() +'-'+date.getMonth() + '-' + 
+				       date.getDate() + '-星期' + date.getDay(),
+				input = document.querySelector('.input').value,
+				todo = {
+					message:input,
+					time:time
+				},
+				todos = JSON.parse(localStorage.getItem('todolist')) || [];
+			todos.push(todo);
+			localStorage.setItem('todolist',JSON.stringify(todos));
+			init();
+		}
+
+		function del(e){
+			e.preventDefault();
+			let num=0,
+				todos=[];
+			if(e.target.nodeName == 'A'){
+				console.log('tt',e.target.nodeName);
+				num = e.target.dataset.num;
+				todos = JSON.parse(localStorage.getItem('todolist'));
+				todos.splice(num,1);
+				localStorage.setItem('todolist',JSON.stringify(todos));
+				init();
+			}
+			
+			
+		}
+
+		init();
+		submit.addEventListener('click',insert);
+		board.addEventListener('click',del);
+	</script>
+</body>
+</html>
